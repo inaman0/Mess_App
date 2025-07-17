@@ -1,0 +1,40 @@
+{
+
+"meal": {
+
+  "cluster" : "rasp_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "Meal_type": {
+
+     "name" : "Meal_type",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"Meal_type", 
+     "type" : "String"
+     },
+    "Date": {
+
+     "name" : "Date",
+     "required" : "true",
+     "type" : "Date"
+     },
+    "IsFeast": {
+
+     "name" : "IsFeast",
+     "required" : "true",
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

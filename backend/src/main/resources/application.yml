@@ -1,0 +1,57 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/keycloak_trial
+    username: root
+    password: Ndp@2023
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: spring_backend
+            client-secret: "jVke6pHF3yfP9lJBHBHPQU8JlobhG2wI"
+            authorization-grant-type: authorization_code
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:4000/realms/demo_realm
+            authorization-uri: http://localhost:4000/realms/demo_realm/protocol/openid-connect/auth
+            token-uri: http://localhost:4000/realms/demo_realm/protocol/openid-connect/token
+            user-info-uri: http://localhost:4000/realms/demo_realm/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:4000/realms/demo_realm/protocol/openid-connect/certs
+
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:4000/realms/demo_realm
+
+jwt:
+  auth:
+    converter:
+      resource-id: spring_backend
+      principle-attribute: preferred_username
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security.oauth2: DEBUG
+
+authentication-type: "implicit"
+
+output.dir: src/test/java/generated
+
+project_path: /Users/namanpandya/Desktop/rasp_backend
+content_root_package_path: src/main/java/com/rasp/app
+reference_package_path: com.rasp.app
+generate_resource_path: /Users/namanpandya/Desktop/abcd
+clientId: "spring_backend"
+clientSecret: "jVke6pHF3yfP9lJBHBHPQU8JlobhG2wI" # Replace with your actual secret
+keycloakTokenUrl: "http://localhost:4000/realms/demo_realm/protocol/openid-connect/token"
+keycloakUrl: "http://localhost:4000/admin/realms/demo_realm"
+ResourcePack: "com.rasp.app.resource"
+HelperPack: "com.rasp.app.helper"
+

@@ -1,0 +1,19 @@
+{
+
+"user_type": {
+
+  "purpose" : "POSSIBLE_VALUE",
+  "values" : {
+    "Admin": {
+
+     "id":"Admin", 
+      "name":"Admin" 
+   },
+    "User": {
+
+     "id":"User", 
+      "name":"User" 
+   }
+}
+}
+}

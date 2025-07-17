@@ -1,0 +1,226 @@
+/* Base Card Styles */
+.menu-item-card {
+  width: 220px;
+  height: 160px;
+  padding: 1rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  border: 1px solid #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible;
+}
+
+/* Triangle corner indicator */
+.menu-item-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  opacity: 0.3;
+  z-index: 1;
+}
+
+/* Meal type specific styling */
+.menu-item-card[data-meal-type="Breakfast"] {
+  background: linear-gradient(135deg, #fff9db 0%, #ffe8cc 100%);
+  border-color: #ffd8a8;
+}
+
+.menu-item-card[data-meal-type="Lunch"] {
+  background: linear-gradient(135deg, #e3fafc 0%, #c5f6fa 100%);
+  border-color: #99e9f2;
+}
+
+.menu-item-card[data-meal-type="Snacks"] {
+  background: linear-gradient(135deg, #f3f0ff 0%, #e5dbff 100%);
+  border-color: #d0bfff;
+}
+
+.menu-item-card[data-meal-type="Dinner"] {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  border-color: #ffb4b4;
+}
+
+/* Triangle color by meal type */
+.menu-item-card[data-meal-type="Breakfast"]::before { color: #ff922b; }
+.menu-item-card[data-meal-type="Lunch"]::before { color: #15aabf; }
+.menu-item-card[data-meal-type="Snacks"]::before { color: #845ef7; }
+.menu-item-card[data-meal-type="Dinner"]::before { color: #fa5252; }
+
+/* Card content container */
+.menu-item-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+/* Dish name container */
+.menu-item-name-container {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+/* Dish name */
+.menu-item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 0.25rem 0;
+  width: 100%;
+  padding: 0;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  display: block;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Dish type label */
+.menu-item-type {
+  font-size: 0.75rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Vegetarian dish indicator */
+.menu-item-veg {
+  color: #22c55e; /* Green color for veg */
+  font-weight: 600;
+  
+}
+
+/* Non-vegetarian dish indicator */
+.menu-item-nonveg {
+  color: #ef4444; /* Red color for non-veg */
+  font-weight: 600;
+}
+
+.menu-item-veg, .menu-item-nonveg {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Feast special styling */
+.menu-item-feast {
+  border: 1px solid transparent;
+  background-image: 
+    linear-gradient(to bottom right, #fff9db, #ffec99),
+    linear-gradient(135deg, #ffd43b, #fcc419);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  animation: menuItemBorderGlow 8s ease infinite;
+}
+
+/* Feast badge */
+.menu-item-feast-badge {
+  margin-top: 6px;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #d9480f;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* Force full text display in all cases */
+.menu-item-card * {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  max-height: none !important;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+/* Animations */
+@keyframes menuItemBorderGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .menu-item-card {
+    width: 150px;
+    min-height: 180px;
+  }
+  
+  .menu-item-name {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-item-card {
+    width: 140px;
+    min-height: 160px;
+  }
+  
+  .menu-item-name {
+    font-size: 0.85rem;
+  }
+  
+  .menu-item-type {
+    font-size: 0.65rem;
+  }
+}
+
+.menu-item-rating {
+  font-size: 1rem;
+  color: rgba(6, 5, 5, 0.449);
+  margin-top: 0.25rem;
+  font-weight: bold;
+}
+
+.menu-item-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-item-name-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 42px;
+  width: 100%;
+}
+
+.menu-item-rating {
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #666;
+}

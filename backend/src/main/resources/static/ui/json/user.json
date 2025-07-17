@@ -1,0 +1,46 @@
+{
+
+"user": {
+
+  "cluster" : "rasp_db",
+  "ui" : false,
+  "api" : true,
+  "fields" : {
+    "id": {
+
+     "name" : "id",
+     "required" : "true",
+     "type" : "String"
+     },
+    "Name": {
+
+     "name" : "Name",
+     "required" : "true",
+     "type" : "String"
+     },
+    "Email": {
+
+     "name" : "Email",
+     "required" : "true",
+     "type" : "String"
+     },
+    "Room_no": {
+
+     "name" : "Room_no",
+     "required" : "false",
+     "type" : "String"
+     },
+    "User_type": {
+
+     "name" : "User_type",
+     "required" : "true",
+     "is_enum" : "true",
+      "possible_value" :"User_type", 
+     "type" : "String"
+     }
+   
+  }
+ }
+
+}
+

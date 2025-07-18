@@ -44,7 +44,7 @@ function App() {
       </Route>
 
       {/* Admin routes */}
-      <Route element={<ProtectedRoute />}>
+      <Route element={<ProtectedRoute adminOnly={true} />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<WeeklyRatings />} />
           <Route path="upload-menu" element={<UploadMenu />} />

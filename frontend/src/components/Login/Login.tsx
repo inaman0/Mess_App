@@ -51,7 +51,7 @@ const Login = () => {
     // Implement your password validation logic here
     // For example, check if password length is greater than or equal to 8 characters
     // console.log("Password validity: ",formData.password.length >= 6 );
-    return formData.password.length >= 6;
+    return formData.password.length >= 3;
   };
   const getCookie = (name: string): string | null => {
     const value = `; ${document.cookie}`;

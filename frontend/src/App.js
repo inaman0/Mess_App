@@ -23,6 +23,8 @@ import Feedback from "./admin/pages/Feedback";
 import SickMeals from "./admin/pages/SickMeals";
 import Page404 from "./admin/pages/Page404";
 import UPage404 from "./user/pages/UPage404";
+import UserLayout from "./user/layouts/UserLayout";
+
 
 
 
@@ -30,7 +32,7 @@ function App() {
   return (
   <Routes>
     {/* User routes */}
-    <Route path='/' element={<MainLayout/>}>
+    <Route path='/' element={<UserLayout />}>
       <Route index element={<Home />} />
       <Route path='menu' element={<Menu />} />
       <Route path='weekmenu' element={<WeekMenu />} />

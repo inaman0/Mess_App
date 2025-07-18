@@ -24,46 +24,47 @@ import SickMeals from "./admin/pages/SickMeals";
 import Page404 from "./admin/pages/Page404";
 import UPage404 from "./user/pages/UPage404";
 import UserLayout from "./user/layouts/UserLayout";
-
+import ProtectedRoute from "./auth/ProtectedRoute";
 
 
 
 function App() {
   return (
-  <Routes>
-    {/* User routes */}
-    <Route path='/' element={<UserLayout />}>
-      <Route index element={<Home />} />
-      <Route path='menu' element={<Menu />} />
-      <Route path='weekmenu' element={<WeekMenu />} />
-      <Route path='feedback' element={<UserFeedback />} />
-      <Route path='sickmeal' element={<Sickmeal />} />
-      <Route path='*' element={<UPage404 />} />
-    </Route>
-      
-    {/* Admin routes */}
-    <Route path='/admin' element={<AdminLayout />}>
-      <Route index element={<WeeklyRatings />} />
-      <Route path='upload-menu' element={<UploadMenu />} />
-      {/* <Route path='add-feast' element={<AddFeast />} /> */}
-      <Route path='edit-menu' element={<EditMenu />} />
-      <Route path='feedback' element={<Feedback />} />
-      <Route path='sick-meal' element={<SickMeals />} />
-      <Route path='*' element={<Page404 />} />
-    </Route>
+    <Routes>
+      {/* User routes */}
+      <Route element={<ProtectedRoute userOnly={true} />}>
+        <Route path="/" element={<UserLayout />}>
+          <Route index element={<Home />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="weekmenu" element={<WeekMenu />} />
+          <Route path="feedback" element={<UserFeedback />} />
+          <Route path="sickmeal" element={<Sickmeal />} />
+          <Route path="*" element={<UPage404 />} />
+        </Route>
+      </Route>
 
-    <Route path='/edit' element={<Edit/>}/>
-    <Route path='/page1' element={<Page1 />}/>
-    <Route path='/registration' element={<Registration />}/>
-    <Route path='/login' element={<Login />}/>
-    <Route path='/page2' element={<Page2 />}/>
-    <Route path='/page3' element={<Page3 />}/>
-    <Route path='/page4' element={<Page4 />}/>
-    <Route path='/page5' element={<Page5 />}/>
-    <Route path='/page6' element={<Page6 />}/>
+      {/* Admin routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<WeeklyRatings />} />
+          <Route path="upload-menu" element={<UploadMenu />} />
+          <Route path="edit-menu" element={<EditMenu />} />
+          <Route path="feedback" element={<Feedback />} />
+          <Route path="sick-meal" element={<SickMeals />} />
+          <Route path="*" element={<Page404 />} />
+        </Route>
+      </Route>
 
-
-  </Routes>
+      <Route path="/edit" element={<Edit />} />
+      <Route path="/page1" element={<Page1 />} />
+      <Route path="/registration" element={<Registration />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/page2" element={<Page2 />} />
+      <Route path="/page3" element={<Page3 />} />
+      <Route path="/page4" element={<Page4 />} />
+      <Route path="/page5" element={<Page5 />} />
+      <Route path="/page6" element={<Page6 />} />
+    </Routes>
   );
 }
 

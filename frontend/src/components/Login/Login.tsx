@@ -12,6 +12,7 @@ import Login1 from "./Login1";
 export type User = {
   username: string;
   password: string;
+  role?: "user" | "admin";
 };
 const Login = () => {
   const navigate = useNavigate();

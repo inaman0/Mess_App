@@ -7,6 +7,18 @@ const UserSidebar = () => {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
+   const handleLogout = () => {
+     // Remove tokens from cookies
+     document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+     document.cookie =
+       "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+     document.cookie =
+       "refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+     // Optionally: reload or redirect to login
+     window.location.href = "/login";
+   };
+
   return (
     <>
       {isOpen ? null : <div className="toggle-column"></div>}
@@ -57,7 +69,10 @@ const UserSidebar = () => {
           <NavLink
             to="/login"
             className="nav-link logout"
-            onClick={toggleSidebar}
+            onClick={() => {
+              toggleSidebar();
+              handleLogout();
+            }}
           >
             Logout
           </NavLink>

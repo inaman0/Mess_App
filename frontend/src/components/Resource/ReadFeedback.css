@@ -166,3 +166,8 @@
     height: auto;   /* Optional: let height adjust to content */
   }
 }
+
+.alert {
+  align-content: center;
+  text-align: center;
+}

@@ -176,7 +176,8 @@ const Menu = () => {
 
   return (
     <>
-
+      <h1 className="title">Today's Menu</h1>
+      <div className="uploader-wrapper">
         <div className="menu-container">
       
         <div className="header-container">
@@ -218,6 +219,7 @@ const Menu = () => {
             </div>
           );
         })}
+        </div>
       </div>
     </>
   );

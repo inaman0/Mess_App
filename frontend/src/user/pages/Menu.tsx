@@ -175,47 +175,51 @@ const Menu = () => {
   );
 
   return (
-    <div className="menu-container">
-      <div className="header-container">
-        <h1 className="current-meal-title">
-          Today's Menu ({today.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          })})
-        </h1>
-      </div>
+    <>
+
+        <div className="menu-container">
       
-      {mealTypeOrder.map(mealType => {
-        const group = groupedMenu[mealType];
-        if (!group || group.items.length === 0) return null;
+        <div className="header-container">
+          <h1 className="current-meal-title">
+            Today's Menu ({today.toLocaleDateString('en-US', { 
+              month: 'short', 
+              day: 'numeric', 
+              year: 'numeric' 
+            })})
+          </h1>
+        </div>
         
-        return (
-          <div key={mealType} className={`meal-type-section ${group.isFeast ? 'feast-section' : ''}`}>
-            <div className="meal-type-header">
-              <h2 className="meal-type-title">
-                {mealType}
-                {group.isFeast && <span className="feast-label">Feast Day!</span>}
-              </h2>
-            </div>
-            <div className="meal-cards-container">
-              <div className="meal-cards-row">
-                {group.items.map(item => (
-                  <ReviewMenuCard
-                    key={item.id}
-                    Dish_name={item.Dish_name}
-                    type={item.type}
-                    id={item.id}
-                    mealType={mealType}
-                    isFeast={group.isFeast}
-                  />
-                ))}
+        {mealTypeOrder.map(mealType => {
+          const group = groupedMenu[mealType];
+          if (!group || group.items.length === 0) return null;
+          
+          return (
+            <div key={mealType} className={`meal-type-section ${group.isFeast ? 'feast-section' : ''}`}>
+              <div className="meal-type-header">
+                <h2 className="meal-type-title">
+                  {mealType}
+                  {group.isFeast && <span className="feast-label">Feast Day!</span>}
+                </h2>
+              </div>
+              <div className="meal-cards-container">
+                <div className="meal-cards-row">
+                  {group.items.map(item => (
+                    <ReviewMenuCard
+                      key={item.id}
+                      Dish_name={item.Dish_name}
+                      type={item.type}
+                      id={item.id}
+                      mealType={mealType}
+                      isFeast={group.isFeast}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+    </>
   );
 };
 

@@ -1,16 +1,13 @@
-import React from 'react'
-import './Background.css';
+import "./Background.css";
 
 const Background = () => {
   return (
-    <div className='background-container'>
-      <img 
-        src="Background.png"
-        alt="User Background"
-        className='user-background'
-      />
-    </div>
-  )
-}
+    <img
+      src="/Background.png"
+      alt="Admin Background"
+      className="admin-background"
+    />
+  );
+};
 
-export default Background
+export default Background;

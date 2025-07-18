@@ -158,60 +158,65 @@ const accessToken = getCookie("access_token");
   const mealTypeOrder = ['Breakfast', 'Lunch', 'Snacks', 'Dinner', 'Other'];
 
   return (
-    <div className="menu-container">
-      <div className="date-navigation">
-        <button 
-          onClick={() => changeDate(-1)}
-          className="btn-primary"
-        >
-          Previous Day
-        </button>
-        <h1 className="date-title">
-          Menu for {formatDate(currentDate)}
-        </h1>
-        <button 
-          onClick={() => changeDate(1)}
-          className="btn-primary"
-        >
-          Next Day
-        </button>
-      </div>
+    <>
+    <h1 className="title">Weekly Menu</h1>
+      <div className="uploader-wrapper">
+        <div className="menu-container">
+          <div className="date-navigation">
+            <button 
+              onClick={() => changeDate(-1)}
+              className="btn-primary"
+            >
+              Previous Day
+            </button>
+            <h1 className="date-title">
+              Menu for {formatDate(currentDate)}
+            </h1>
+            <button 
+              onClick={() => changeDate(1)}
+              className="btn-primary"
+            >
+              Next Day
+            </button>
+          </div>
 
-      {currentDayMenuItems.length === 0 ? (
-        <div className="empty-message">
-          No menu items available for this day
-        </div>
-      ) : (
-        mealTypeOrder.map(mealType => {
-          const items = groupedMenu[mealType];
-          if (!items || items.length === 0) return null;
-          
-          return (
-            <div key={mealType} className="meal-type-section">
-              <h2 className="meal-type-title">{mealType}</h2>
-              <div className="meal-type-row">
-                {items.map(item => (
-                  <div 
-                    key={item.id}
-                    className={`meal-card`}
-                    data-meal-type={mealType}
-                  >
-                    <div className="meal-card-content">
-                      <div className="dish-name-container">
-                        <h3 className="dish-name">{item.Dish_name}</h3>
-                        <p className={`dish-type ${item.type === 'Veg' ? 'dish-type-veg' : 'dish-type-nonveg'}`}>
-                          {item.type === 'Veg' ? 'VEG' : 'NON-VEG'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {currentDayMenuItems.length === 0 ? (
+            <div className="empty-message">
+              No menu items available for this day
             </div>
-          );
-        })
-      )}
-    </div>
+          ) : (
+            mealTypeOrder.map(mealType => {
+              const items = groupedMenu[mealType];
+              if (!items || items.length === 0) return null;
+              
+              return (
+                <div key={mealType} className="meal-type-section">
+                  <h2 className="meal-type-title">{mealType}</h2>
+                  <div className="meal-type-row">
+                    {items.map(item => (
+                      <div 
+                        key={item.id}
+                        className={`meal-card`}
+                        data-meal-type={mealType}
+                      >
+                        <div className="meal-card-content">
+                          <div className="dish-name-container">
+                            <h3 className="dish-name">{item.Dish_name}</h3>
+                            <p className={`dish-type ${item.type === 'Veg' ? 'dish-type-veg' : 'dish-type-nonveg'}`}>
+                              {item.type === 'Veg' ? 'VEG' : 'NON-VEG'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -6,9 +6,12 @@ import ReadSick_meal from '../../components/Resource/ReadSick_meal'
 
 const Sickmeal = () => {
   return (
-    <div className='d-flex justify-content-center align-items-center vh-90'>
-      <CreateSick_meal />
-    </div>
+    <>
+    <h1 className="title">Sick Meal</h1>
+      <div className="uploader-wrapper">
+          <CreateSick_meal />
+      </div>
+    </>
   )
 }
 

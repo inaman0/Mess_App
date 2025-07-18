@@ -1,12 +1,14 @@
-import Menu from './Menu';
-import MenuOfTime from './MenuOfTime';
+import Menu from "./Menu";
+import MenuOfTime from "./MenuOfTime";
 
 const Home = () => {
-  
   return (
-    <div>
-      <MenuOfTime />
-    </div>
+    <>
+      <h1 className="title">Home</h1>
+      <div className="uploader-wrapper">
+        <MenuOfTime />
+      </div>
+    </>
   );
 };
 

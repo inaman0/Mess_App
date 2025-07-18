@@ -125,20 +125,20 @@ public class IamService {
 
     public ResponseEntity<?> addUser(String newUsername, String newPassword, String newFirstName, String newLastName, String newEmail, String resource, Map<String, Object> map) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, ApplicationException {
 
-        String myClass= resourcePackage+"."+resource;
-        Class<BaseResource> clazz = (Class<BaseResource>) Class.forName(myClass);
+//        String myClass= resourcePackage+"."+resource;
+//        Class<BaseResource> clazz = (Class<BaseResource>) Class.forName(myClass);
+//
+//
+//        BaseResource baseResource= clazz.getDeclaredConstructor().newInstance();
+//        baseResource.convertMapToResource(map);
+
+//        String myHelper= helperPackage+"."+resource+"Helper";
+//        Class<BaseHelper> clazz2=(Class<BaseHelper>) Class.forName(myHelper) ;
+//        BaseHelper baseHelper=clazz2.getDeclaredConstructor().newInstance();
+//        baseHelper.add(baseResource);
 
 
-        BaseResource baseResource= clazz.getDeclaredConstructor().newInstance();
-        baseResource.convertMapToResource(map);
-
-        String myHelper= helperPackage+"."+resource+"Helper";
-        Class<BaseHelper> clazz2=(Class<BaseHelper>) Class.forName(myHelper) ;
-        BaseHelper baseHelper=clazz2.getDeclaredConstructor().newInstance();
-        baseHelper.add(baseResource);
-
-
-        System.out.println( baseResource.getId()+"1111111111111111222222222222222");
+//        System.out.println( baseResource.getId()+"1111111111111111222222222222222");
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -184,7 +184,7 @@ public class IamService {
 
         // Custom Attributes
         Map<String, List<String>> attributes = new HashMap<>();
-        attributes.put("custom_id", List.of( baseResource.getId())); // Correct: List of Strings
+//        attributes.put("custom_id", List.of( baseResource.getId())); // Correct: List of Strings
 
         userPayload.put("attributes", attributes); // or any value you want
         userPayload.put("credentials", List.of(credentials));

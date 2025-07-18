@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/keycloak_trial
     username: root
-    password: Ndp@2023
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   security:
     oauth2:
@@ -13,7 +13,7 @@ spring:
         registration:
           keycloak:
             client-id: spring_backend
-            client-secret: "jVke6pHF3yfP9lJBHBHPQU8JlobhG2wI"
+            client-secret: "PffE37WqKiXpwD9s9aYFcN65xuxMkCeA"
             authorization-grant-type: authorization_code
             scope: openid, profile, email
         provider:
@@ -49,7 +49,7 @@ content_root_package_path: src/main/java/com/rasp/app
 reference_package_path: com.rasp.app
 generate_resource_path: /Users/namanpandya/Desktop/abcd
 clientId: "spring_backend"
-clientSecret: "jVke6pHF3yfP9lJBHBHPQU8JlobhG2wI" # Replace with your actual secret
+clientSecret: "PffE37WqKiXpwD9s9aYFcN65xuxMkCeA" # Replace with your actual secret
 keycloakTokenUrl: "http://localhost:4000/realms/demo_realm/protocol/openid-connect/token"
 keycloakUrl: "http://localhost:4000/admin/realms/demo_realm"
 ResourcePack: "com.rasp.app.resource"

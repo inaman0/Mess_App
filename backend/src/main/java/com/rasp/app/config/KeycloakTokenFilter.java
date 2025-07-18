@@ -33,7 +33,7 @@ public class KeycloakTokenFilter extends OncePerRequestFilter {
     private static final String REFRESH_URL = "http://localhost:4000/realms/demo_realm/protocol/openid-connect/token";
 
     private static final String CLIENT_ID = "spring_backend";
-    private static final String CLIENT_SECRET = "jVke6pHF3yfP9lJBHBHPQU8JlobhG2wI";
+    private static final String CLIENT_SECRET = "PffE37WqKiXpwD9s9aYFcN65xuxMkCeA";
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();

@@ -43,7 +43,7 @@ const CreateSick_meal = () => {
   const metadataUrl = apiConfig.getResourceMetaDataUrl("Sick_meal");
   const navigate = useNavigate();
   
-  const HARDCODED_USER_ID = "ffa213e1-7f56-4d51-8e52-0e275c47f495-61";
+  const HARDCODED_USER_ID = "07a600cf-f4e0-461a-a7ea-17ec4185d159-56";
   const fetchedResources = useRef(new Set<string>());
   const fetchedEnum = useRef(new Set<string>());
   const queryClient = useQueryClient();

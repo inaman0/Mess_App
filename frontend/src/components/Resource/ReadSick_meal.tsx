@@ -144,10 +144,30 @@ const ReadSick_meal = () => {
 
       const data = await response.json();
       setUserData(data.resource || []);
+      console.log("User Data:", data.resource);
       return data;
     },
   });
 
+
+  // Function to get user details by User_id
+  const getUserDetails = (userId: string) => {
+    const user = userData.find((u) => u.id === userId);
+    console.log("Looking for User ID:", userId);
+    console.log(
+      "Available user IDs:",
+      userData.map((u) => u.id)
+    );
+    if (user) {
+      return {
+        name: user.Name || "N/A",
+        email: user.Email || "N/A",
+        room: user.Room_no || "N/A",
+      };
+    }
+    return { name: "N/A", email: "N/A", room: "N/A" };
+  };
+  
   // Fetch meal data using React Query
   const { data: mealDataRes } = useQuery({
     queryKey: ['mealData'],
@@ -183,18 +203,7 @@ const ReadSick_meal = () => {
     },
   });
 
-  // Function to get user details by User_id
-  const getUserDetails = (userId: string) => {
-    const user = userData.find((u) => u.id === userId);
-    if (user) {
-      return {
-        name: user.Name || "N/A",
-        email: user.Email || "N/A",
-        room: user.Room_no || "N/A",
-      };
-    }
-    return { name: "N/A", email: "N/A", room: "N/A" };
-  };
+  
 
   // Function to get meal details by Meal_id
   const getMealDetails = (mealId: string) => {

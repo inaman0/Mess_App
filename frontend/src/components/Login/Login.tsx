@@ -88,6 +88,7 @@ try{
     const decodedJwt: any = jwtDecode(accessToken || "");
     const username = decodedJwt.preferred_username || "";
     console.log("Decoded JWT username:", username);
+    console.log("Decoded JWT email:", decodedJwt.email);
   
    
     if(!res){

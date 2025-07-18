@@ -9,16 +9,17 @@ const AdminSidebar = () => {
 
   return (
     <>
-     {isOpen ? null : <div className="toggle-column"></div>}
+      {isOpen ? null : <div className="toggle-column"></div>}
 
       {/* Toggle Button */}
-     <button
-        className={`sidebar-toggle btn btn-outline-primary m-3 ${isOpen ? 'open' : ''}`}
+      <button
+        className={`sidebar-toggle btn btn-outline-primary m-3 ${
+          isOpen ? "open" : ""
+        }`}
         onClick={toggleSidebar}
       >
         ☰
       </button>
-
 
       {/* Sidebar Overlay */}
       <div
@@ -39,15 +40,14 @@ const AdminSidebar = () => {
           <h6 className="mb-3 fw-bold">Information Technology Bangalore</h6>
         </div>
         <nav className="nav flex-column px-3">
-          <NavLink
-            to="/admin"
-            className="nav-link"
-            onClick={toggleSidebar}
-            end
-          >
+          <NavLink to="/admin" className="nav-link" onClick={toggleSidebar} end>
             Ratings
           </NavLink>
-          <NavLink to="/admin/upload-menu" className="nav-link" onClick={toggleSidebar}>
+          <NavLink
+            to="/admin/upload-menu"
+            className="nav-link"
+            onClick={toggleSidebar}
+          >
             Upload Menu
           </NavLink>
           {/* <NavLink
@@ -72,16 +72,23 @@ const AdminSidebar = () => {
             Feedback
           </NavLink>
 
-           <NavLink
+          <NavLink
             to="/admin/sick-meal"
             className="nav-link"
             onClick={toggleSidebar}
           >
             Sick Meals
           </NavLink>
+
+          <NavLink
+            to="/login"
+            className="nav-link logout"
+            onClick={toggleSidebar}
+          >
+            Logout
+          </NavLink>
         </nav>
       </div>
-
     </>
   );
 };

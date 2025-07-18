@@ -9,16 +9,17 @@ const UserSidebar = () => {
 
   return (
     <>
-     {isOpen ? null : <div className="toggle-column"></div>}
+      {isOpen ? null : <div className="toggle-column"></div>}
 
       {/* Toggle Button */}
-     <button
-        className={`sidebar-toggle btn btn-outline-primary m-3 ${isOpen ? 'open' : ''}`}
+      <button
+        className={`sidebar-toggle btn btn-outline-primary m-3 ${
+          isOpen ? "open" : ""
+        }`}
         onClick={toggleSidebar}
       >
         ☰
       </button>
-
 
       {/* Sidebar Overlay */}
       <div
@@ -39,36 +40,29 @@ const UserSidebar = () => {
           <h6 className="mb-3 fw-bold">Information Technology Bangalore</h6>
         </div>
         <nav className="nav flex-column px-3">
-          <NavLink
-            to="/"
-            className="nav-link"
-            onClick={toggleSidebar}
-            end
-          >
+          <NavLink to="/" className="nav-link" onClick={toggleSidebar} end>
             Dashboard
           </NavLink>
           <NavLink to="/menu" className="nav-link" onClick={toggleSidebar}>
             Today's Menu
           </NavLink>
 
-          <NavLink
-            to="/weekmenu"
-            className="nav-link"
-            onClick={toggleSidebar}
-          >
+          <NavLink to="/weekmenu" className="nav-link" onClick={toggleSidebar}>
             Week's Menu
           </NavLink>
-          <NavLink
-            to="/sickmeal"
-            className="nav-link"
-            onClick={toggleSidebar}
-          >
+          <NavLink to="/sickmeal" className="nav-link" onClick={toggleSidebar}>
             Sick Meal
           </NavLink>
 
+          <NavLink
+            to="/login"
+            className="nav-link logout"
+            onClick={toggleSidebar}
+          >
+            Logout
+          </NavLink>
         </nav>
       </div>
-
     </>
   );
 };

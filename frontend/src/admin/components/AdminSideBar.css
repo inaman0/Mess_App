@@ -66,6 +66,18 @@
   font-weight: bold;
 }
 
+/* Logout link styling */
+.nav-link.logout {
+  color: #dc3545 !important;
+  border: 1px solid #dc3545;
+  margin-top: 20px;
+}
+
+.nav-link.logout:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
 /* Logo styling */
 .logo {
   object-fit: contain;
@@ -85,4 +97,3 @@
     font-size: 0.8rem;
   }
 }
-

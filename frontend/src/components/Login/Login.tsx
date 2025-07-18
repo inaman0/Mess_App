@@ -4,6 +4,7 @@ import "../../App.css";
 import { useContext, useEffect, useState } from "react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 import { LoginContext } from "../../context/LoginContext";
 import { login } from "../../apis/backend";
@@ -74,29 +75,35 @@ const Login = () => {
     const loginObj: any = formData;
 try{
   const res = await login(loginObj);
-    // const session_id = await res.json();
-    // const ssid = res;
+    
     const jwt = getCookie("jwt");
     const accessToken = getCookie("access_token");
     const refreshToken = getCookie("refresh_token");
-    // console.log("User session Id after submit", ssid);
 
-    // setIsLoggedIn(true);
-    // console.log("Is user Logged In after submit:", isLoggedIn);
+    console.log("JWT:", jwt);
+    console.log("Access Token:", accessToken);
+    console.log("Refresh Token:", refreshToken);
 
-    // Set data in session storage
-    // sessionStorage.setItem("key", ssid);
-    // Get data from session storage
-    // const value = sessionStorage.getItem("key");
-    console.log("jwt token details", jwt); // Output: value
-    // if(res.statusCode === 200){}""
+    const decodedJwt: any = jwtDecode(accessToken || "");
+    const username = decodedJwt.preferred_username || "";
+    console.log("Decoded JWT username:", username);
+  
+   
     if(!res){
       setError("Invalid username or password. Please try again.");
       return;
     }
     if (res) {
-
-      navigate("/");
+      // if user is admin, navigate to admin page
+      if(username === "foodcomm"){
+        setIsLoggedIn(true);
+        navigate("/admin");
+      }
+      // else navigate to home page
+      else{
+        setIsLoggedIn(true);
+        navigate("/");
+      }
     }
 }
 

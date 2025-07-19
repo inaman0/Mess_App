@@ -3,8 +3,6 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { useQuery } from '@tanstack/react-query';
 import apiConfig from '../../config/apiConfig';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -133,7 +131,7 @@ const ReadReview: React.FC<ReadReviewProps> = ({ setRatings }) => {
         {rowData.length === 0 && colDef1.length === 0 ? (
           <div>No data available. Please add a resource attribute.</div>
         ) : (
-          <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
+          <div >
             <AgGridReact
               rowData={rowData}
               columnDefs={colDef1}

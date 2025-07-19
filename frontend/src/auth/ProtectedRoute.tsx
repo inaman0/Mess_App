@@ -25,13 +25,14 @@ const ProtectedRoute = ({
 
   try {
     const decodedToken: any = jwtDecode(accessToken);
+    console.log(decodedToken);
     const username = decodedToken?.preferred_username;
 
-    if (adminOnly && username !== "foodcomm") {
+    if (adminOnly && username !== "admin1") {
       return <Navigate to="/" replace />;
     }
 
-    if (userOnly && username === "foodcomm") {
+    if (userOnly && username === "admin1") {
       return <Navigate to="/admin" replace />;
     }
 

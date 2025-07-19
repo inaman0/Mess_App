@@ -5,12 +5,38 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchForeignResource } from '../../apis/resources';
 import { fetchEnum } from '../../apis/enum';
 import { ImageUploader } from '../../user/components/ImageUploader';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export type resourceMetaData = {
   resource: string;
   fieldValues: any[];
 };
+
+interface UserData {
+  id: string;
+  Name?: string;
+  Email?: string;
+  Room_no?: string;
+  [key: string]: any;
+}
+
+interface FeedbackData {
+  User?: string;
+  Description?: string;
+  Date?: string;
+  Image?: string;
+  [key: string]: any;
+}
+
+interface Field {
+  name: string;
+  type: string;
+  required: boolean;
+  foreign?: string;
+  foreign_field?: string;
+  isEnum?: boolean;
+  possible_value?: string;
+}
 
 const getCookie = (name: string): string | null => {
   const value = `; ${document.cookie}`;
@@ -20,26 +46,68 @@ const getCookie = (name: string): string | null => {
 };
 
 const CreateFeedback = () => {
-  const [fields, setFields] = useState<any[]>([]);
-  const [dataToSave, setDataToSave] = useState<any>({});
+  const [fields, setFields] = useState<Field[]>([]);
+  const [dataToSave, setDataToSave] = useState<FeedbackData>({});
   const [showToast, setShowToast] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData[]>([]);
   const [foreignkeyData, setForeignkeyData] = useState<Record<string, any[]>>({});
   const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
   const [enums, setEnums] = useState<Record<string, any[]>>({});
   const regex = /^(g_|archived|extra_data)/;
   const apiUrl = apiConfig.getResourceUrl("feedback");
+  const userApiUrl = `${apiConfig.getResourceUrl("user")}?`;
   const metadataUrl = apiConfig.getResourceMetaDataUrl("Feedback");
   const navigate = useNavigate();
   
-  const HARDCODED_USER_ID = "07a600cf-f4e0-461a-a7ea-17ec4185d159-56";
   const fetchedResources = useRef(new Set<string>());
   const fetchedEnum = useRef(new Set<string>());
   const queryClient = useQueryClient();
 
-  // Set hardcoded user ID when component mounts
+  const accessToken = getCookie("access_token");
+  const decodedJwt: any = jwtDecode(accessToken || "");
+
+  // Fetch user data using React Query
+  const { data: userDataRes } = useQuery({
+    queryKey: ['userData'],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      const queryId: any = "GET_ALL";
+      params.append("queryId", queryId);
+
+      const accessToken = getCookie("access_token");
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await fetch(
+        userApiUrl + params.toString(),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error: " + response.status);
+      }
+
+      const data = await response.json();
+      setUserData(data.resource || []);
+      return data;
+    },
+  });
+
+  // Set user ID when component mounts or userData changes
   useEffect(() => {
-    setDataToSave({ ...dataToSave, User: HARDCODED_USER_ID });
-  }, []);
+    if (userData.length > 0 && decodedJwt.email) {
+      const userId = userData.find(user => user.Email === decodedJwt.email)?.id || "";
+      setDataToSave((prev: FeedbackData) => ({ ...prev, User: userId }));
+    }
+  }, [userData, decodedJwt.email]);
 
   // Fetch foreign data function
   const fetchForeignData = async (
@@ -87,7 +155,7 @@ const CreateFeedback = () => {
       const data = await res.json();
       setFields(data[0].fieldValues);
 
-      const foreignFields = data[0].fieldValues.filter((field: any) => field.foreign && field.name !== 'User');
+      const foreignFields = data[0].fieldValues.filter((field: Field) => field.foreign && field.name !== 'User');
       for (const field of foreignFields) {
         if (!fetchedResources.current.has(field.foreign)) {
           fetchedResources.current.add(field.foreign);
@@ -99,7 +167,7 @@ const CreateFeedback = () => {
         }
       }
 
-      const enumFields = data[0].fieldValues.filter((field: any) => field.isEnum === true);
+      const enumFields = data[0].fieldValues.filter((field: Field) => field.isEnum === true);
       for (const field of enumFields) {
         if (!fetchedEnum.current.has(field.possible_value)) {
           fetchedEnum.current.add(field.possible_value);
@@ -124,17 +192,9 @@ const CreateFeedback = () => {
     try {
       const params = new URLSearchParams();
       const jsonString = JSON.stringify(dataToSave);
-      console.log(jsonString);
       const base64Encoded = btoa(jsonString);
       params.append('resource', base64Encoded);
-      console.log("Encoded Data:", base64Encoded);
-      console.log(apiUrl + `?` + params.toString());
-      console.log("Access Token:", accessToken);
 
-      const decoded: any = jwtDecode(accessToken);
-      const preferredUsername = decoded.preferred_username;
-
-      console.log("Preferred Username:", preferredUsername);
       const response = await fetch(apiUrl + `?` + params.toString(), {
         method: 'POST',
         headers: {
@@ -150,7 +210,7 @@ const CreateFeedback = () => {
           setShowToast(false);
           navigate('/');
         }, 3000);
-        setDataToSave({ User: HARDCODED_USER_ID });
+        setDataToSave({});
       } else {
         const errorText = await response.text();
         console.error("Error response:", response.status, errorText);
@@ -232,84 +292,8 @@ const CreateFeedback = () => {
                     />
                   </div>
                 );
-              } else if (field.foreign) {
-                const options = foreignkeyData[field.foreign] || [];
-                const filteredOptions = options.filter((option) =>
-                  option[field.foreign_field].toLowerCase().includes((searchQueries[field.name] || '').toLowerCase())
-                );
-
-                return (
-                  <div key={index} className="mb-3">
-                    <label className="form-label">
-                      {field.required && <span className="text-danger">*</span>} {field.name}
-                    </label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-outline-secondary form-control text-start dropdown-toggle"
-                        type="button"
-                        id={`dropdownMenu-${field.name}`}
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {dataToSave[field.name]
-                          ? options.find((item) => item[field.foreign_field] === dataToSave[field.name])?.[field.foreign_field] || 'Select'
-                          : `Select ${field.name}`}
-                      </button>
-                      <div className="dropdown-menu w-100" aria-labelledby={`dropdownMenu-${field.name}`}>
-                        <div className="px-2 py-1">
-                          <input
-                            type="text"
-                            className="form-control mb-2"
-                            placeholder={`Search ${field.name}`}
-                            value={searchQueries[field.name] || ''}
-                            onChange={(e) => handleSearchChange(field.name, e.target.value)}
-                          />
-                        </div>
-                        {filteredOptions.length > 0 ? (
-                          filteredOptions.map((option, i) => (
-                            <button
-                              key={i}
-                              className="dropdown-item"
-                              type="button"
-                              onClick={() => {
-                                setDataToSave({ ...dataToSave, [field.name]: option[field.foreign_field] });
-                              }}
-                            >
-                              {option[field.foreign_field]}
-                            </button>
-                          ))
-                        ) : (
-                          <span className="dropdown-item text-muted">No options available</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else if (field.isEnum) {
-                return (
-                  <div key={index} className="mb-3">
-                    <label className="form-label">
-                      {field.required && <span className="text-danger">*</span>} {field.name}
-                    </label>
-                    <select
-                      className="form-select"
-                      name={field.name}
-                      required={field.required}
-                      value={dataToSave[field.name] || ''}
-                      onChange={(e) =>
-                        setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })
-                      }
-                    >
-                      <option value="">Select {field.name}</option>
-                      {enums[field.possible_value]?.map((enumValue: any, idx: number) => (
-                        <option key={idx} value={enumValue}>
-                          {enumValue}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                );
-              } else {
+              } 
+              else {
                 return (
                   <div key={index} className="mb-3">
                     <label className="form-label">

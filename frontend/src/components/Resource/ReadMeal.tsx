@@ -139,7 +139,7 @@ import React, { useState } from 'react';
     {rowData.length === 0 && colDef1.length === 0 ? (
       <div>No data available. Please add a resource attribute.</div>
     ) : (
-      <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
+      <div style={{ height: 500, width: '100%' }}>
       <AgGridReact
         rowData={rowData}
         columnDefs={colDef1}

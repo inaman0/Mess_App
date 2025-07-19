@@ -120,6 +120,7 @@ const getCookie = (name: string): string | null => {
       }
 
       const data = await response.json();
+      console.log(data)
       setResMetaData(data);
       setFields(data[0]?.fieldValues || []);
       const required = data[0]?.fieldValues

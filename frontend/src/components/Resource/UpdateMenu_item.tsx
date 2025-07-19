@@ -94,6 +94,7 @@ const getCookie = (name: string): string | null => {
       }
 
       const data = await response.json();
+      // console.log(data);
       setFetchedData(data.resource || []);
        const initialEditedData = fetchData.reduce((acc: any, item: any) => {
             acc[item.id] = { ...item };

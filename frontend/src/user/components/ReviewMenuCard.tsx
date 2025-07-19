@@ -3,6 +3,7 @@ import apiConfig from '../../config/apiConfig';
 import { FaStar } from 'react-icons/fa';
 import './ReviewCardStyles.css';
 import { useQuery } from '@tanstack/react-query';
+import { jwtDecode } from 'jwt-decode';
 
 interface MenuItemCardProps {
   Dish_name: string;
@@ -19,11 +20,17 @@ interface Review {
   User_id: string;
 }
 
-const HARDCODED_USER_ID = "07a600cf-f4e0-461a-a7ea-17ec4185d159-56";
+interface UserData {
+  id: string;
+  Name?: string;
+  Email?: string;
+  Room_no?: string;
+  [key: string]: any;
+}
 
 const ratingStartTimes = {
   Breakfast: 8,
-  Lunch: 12,
+  Lunch: 1,
   Snacks: 17,
   Dinner: 20
 };
@@ -41,6 +48,7 @@ const ReviewMenuCard: React.FC<MenuItemCardProps> = ({ Dish_name, type, id, meal
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const apiReviewUrl = apiConfig.getResourceUrl('review');
+  const userApiUrl = `${apiConfig.getResourceUrl('user')}?`;
 
   // Check if rating is allowed based on current time
   const checkRatingAvailability = () => {
@@ -51,6 +59,46 @@ const ReviewMenuCard: React.FC<MenuItemCardProps> = ({ Dish_name, type, id, meal
   };
 
   const ratingAllowed = checkRatingAvailability();
+
+  // Get current user's email from JWT
+  const accessToken = getCookie("access_token");
+  const decodedJwt: any = accessToken ? jwtDecode(accessToken) : { email: '' };
+
+  // Fetch user data to get the correct user ID
+  const { data: userData } = useQuery<UserData[]>({
+    queryKey: ['userDataForReview'],
+    queryFn: async () => {
+      const accessToken = getCookie("access_token");
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const params = new URLSearchParams();
+      params.append("queryId", "GET_ALL");
+
+      const response = await fetch(
+        userApiUrl + params.toString(),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error: " + response.status);
+      }
+
+      const data = await response.json();
+      return data.resource || [];
+    },
+  });
+
+  // Get the current user's ID
+  const currentUserId = userData?.find(user => user.Email === decodedJwt.email)?.id || '';
 
   // Fetch reviews using useQuery
   const { 
@@ -90,7 +138,7 @@ const ReviewMenuCard: React.FC<MenuItemCardProps> = ({ Dish_name, type, id, meal
 
   // Check if user has already reviewed this item
   const hasReviewed = reviews?.some(
-    (review) => review.Menu_item_id === id && review.User_id === HARDCODED_USER_ID
+    (review) => review.Menu_item_id === id && review.User_id === currentUserId
   ) || false;
 
   const handleStarClick = (ratingValue: number) => {
@@ -125,14 +173,14 @@ const ReviewMenuCard: React.FC<MenuItemCardProps> = ({ Dish_name, type, id, meal
         throw new Error("Access token not found");
       }
 
-      // Prepare the data in the same format as the example
+      // Prepare the data with the current user's ID
       const reviewData = {
-        User_id: HARDCODED_USER_ID,
+        User_id: currentUserId,
         Menu_item_id: id,
         Ratings: newRating,
       };
 
-      // Convert to base64 encoded string as in the example
+      // Convert to base64 encoded string
       const params = new URLSearchParams();
       const jsonString = JSON.stringify(reviewData);
       const base64Encoded = btoa(jsonString);

@@ -94,6 +94,7 @@ const getCookie = (name: string): string | null => {
       }
 
       const data = await response.json();
+      console.log(data)
       setFetchedData(data.resource || []);
        const initialEditedData = fetchData.reduce((acc: any, item: any) => {
             acc[item.id] = { ...item };
@@ -120,6 +121,7 @@ const getCookie = (name: string): string | null => {
       }
 
       const data = await response.json();
+      console.log(data)
       setResMetaData(data);
       setFields(data[0]?.fieldValues || []);
       const required = data[0]?.fieldValues
@@ -141,7 +143,7 @@ const getCookie = (name: string): string | null => {
     };
   
     const handleUpdate = async (id: any) => {
-
+    console.log("Hello")
     navigate('/edit',{state:{id:id,editedData:editedData,resourceName:'Meal',currUrl:currentUrl,apiUrl:apiUrl.toString(),metadataUrl:metadataUrl.toString(),BaseUrl:BaseUrl.toString()}});
 };
     
@@ -188,7 +190,7 @@ return (
     {rowData.length === 0 && colDef1.length === 0 ? (
       <div>No data available. Please add a resource attribute.</div>
     ) : (
-      <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
+      <div style={{ height: 500, width: '100%' }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={colDef1}

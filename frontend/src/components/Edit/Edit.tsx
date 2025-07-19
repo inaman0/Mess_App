@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import apiConfig from "../../config/apiConfig";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchForeignResource } from '../../apis/resources';
+import { fetchEnum } from '../../apis/enum';
+
 
 export type ResourceMetaData = {
   resource: string;
   fieldValues: any[];
+};
+
+const getCookie = (name: string): string | null => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
 };
 
 const Edit = () => {
@@ -26,110 +37,195 @@ const Edit = () => {
   const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
   const regex = /^(g_|archived|extra_data)/;
   const [enums, setEnums] = useState<Record<string, any[]>>({});
+  const fetchedResources = useRef(new Set<string>());
+  const fetchedEnum = useRef(new Set<string>());
+  const queryClient = useQueryClient();
 
 
-  useEffect(() => {
-    const fetchResMetaData = async () => {
-      const fetchedResources = new Set();
-      const fetchedEnum = new Set();
-      try {
-        const response = await fetch(
-          metadataUrl,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+  // useEffect(() => {
+  //   const fetchResMetaData = async () => {
+  //     const fetchedResources = new Set();
+  //     const fetchedEnum = new Set();
+  //     try {
+  //       const response = await fetch(
+  //         metadataUrl,
+  //         {
+  //           method: "GET",
+  //           headers: { "Content-Type": "application/json" },
+  //         }
+  //       );
 
-        if (response.ok) {
-          const metaData = await response.json();
-          setResMetaData(metaData);
+  //       if (response.ok) {
+  //         const metaData = await response.json();
+  //         // console.log(metaData);
+  //         setResMetaData(metaData);
 
-          const fields = metaData[0]?.fieldValues || [];
-          setFields(fields);
+  //         const fields = metaData[0]?.fieldValues || [];
+  //         setFields(fields);
 
-          const required = fields
-            .filter((field: any) => !regex.test(field.name))
-            .map((field: any) => field.name);
-          setRequiredFields(required);
+  //         const required = fields
+  //           .filter((field: any) => !regex.test(field.name))
+  //           .map((field: any) => field.name);
+  //         setRequiredFields(required);
 
-          const foreignFields = fields.filter((field: any) => field.foreign);
-          for (const field of foreignFields) {
-            if (!fetchedResources.has(field.foreign)) {
-              fetchedResources.add(field.foreign);
-              await fetchForeignData(field.foreign, field.name, field.foreign_field);
-            }
-          }
+  //         const foreignFields = fields.filter((field: any) => field.foreign);
+  //         for (const field of foreignFields) {
+  //           if (!fetchedResources.has(field.foreign)) {
+  //             fetchedResources.add(field.foreign);
+  //             await fetchForeignData(field.foreign, field.name, field.foreign_field);
+  //           }
+  //         }
 
-          const enumFields = fields.filter((field: any) => field.isEnum === true);
-          for (const field of enumFields) {
-            if (!fetchedEnum.has(field.possible_value)) {
-              fetchedEnum.add(field.possible_value);
-              await fetchEnumData(field.possible_value);
-            }
-          }
-        } else {
-          console.error("Failed to fetch metadata:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching metadata:", error);
-      }
-    };
+  //         const enumFields = fields.filter((field: any) => field.isEnum === true);
+  //         for (const field of enumFields) {
+  //           if (!fetchedEnum.has(field.possible_value)) {
+  //             fetchedEnum.add(field.possible_value);
+  //             await fetchEnumData(field.possible_value);
+  //           }
+  //         }
+  //       } else {
+  //         console.error("Failed to fetch metadata:", response.statusText);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching metadata:", error);
+  //     }
+  //   };
 
-    fetchResMetaData();
-  }, [resName]);
-  const fetchEnumData = async (enumName: string) => {
+  //   fetchResMetaData();
+  // }, [resName]);
+  // const fetchEnumData = async (enumName: string) => {
+  //   try {
+  //     const response = await fetch(
+  //       `${apiConfig.API_BASE_URL}/${enumName}`,
+  //       {
+  //         method: 'GET',
+  //         headers: { 'Content-Type': 'application/json' },
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       console.log(data)
+  //       setEnums((prev) => ({
+  //         ...prev,
+  //         [enumName]: data
+  //       }));
+  //     } else {
+  //       console.error(`Error fetching enum data for ${enumName}:`, response.status);
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error fetching enum data for ${enumName}:`, error);
+  //   }
+  // }
+
+  // const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
+  //   try {
+  //     const params = new URLSearchParams();
+  //     const ssid: any = sessionStorage.getItem("key");
+  //     params.append("queryId", "GET_ALL");
+  //     params.append("session_id", ssid);
+
+  //     const response = await fetch(
+  //       `${BaseUrl}/${foreignResource.toLowerCase()}?${params.toString()}`,
+  //       {
+  //         method: "GET",
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setForeignKeyData((prev) => ({
+  //         ...prev,
+  //         [foreignResource]: data.resource,
+  //       }));
+  //     } else {
+  //       console.error(`Error fetching foreign data for ${fieldName}:`, response.status);
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error fetching foreign data for ${fieldName}:`, error);
+  //   }
+  // };
+
+  const fetchForeignData = async (
+    foreignResource: string,
+    fieldName: string,
+    foreignField: string
+  ) => {
     try {
-      const response = await fetch(
-        `${apiConfig.API_BASE_URL}/${enumName}`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setEnums((prev) => ({
-          ...prev,
-          [enumName]: data
-        }));
-      } else {
-        console.error(`Error fetching enum data for ${enumName}:`, response.status);
-      }
-    } catch (error) {
-      console.error(`Error fetching enum data for ${enumName}:`, error);
-    }
-  }
-
-  const fetchForeignData = async (foreignResource: string, fieldName: string, foreignField: string) => {
-    try {
-      const params = new URLSearchParams();
-      const ssid: any = sessionStorage.getItem("key");
-      params.append("queryId", "GET_ALL");
-      params.append("session_id", ssid);
-
-      const response = await fetch(
-        `${BaseUrl}/${foreignResource.toLowerCase()}?${params.toString()}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setForeignKeyData((prev) => ({
-          ...prev,
-          [foreignResource]: data.resource,
-        }));
-      } else {
-        console.error(`Error fetching foreign data for ${fieldName}:`, response.status);
-      }
-    } catch (error) {
-      console.error(`Error fetching foreign data for ${fieldName}:`, error);
+      const data = await fetchForeignResource(foreignResource);
+      setForeignKeyData((prev) => ({
+        ...prev,
+        [foreignResource]: data,
+      }));
+    } catch (err) {
+      console.error(`Error fetching foreign data for ${fieldName}:`, err);
     }
   };
+  
+  // ✅ async function, not useQuery
+  const fetchEnumData = async (enumName: string) => {
+    try {
+      const data = await fetchEnum(enumName);
+      // console.log(data)
+      setEnums((prev) => ({
+        ...prev,
+        [enumName]: data,
+      }));
+    } catch (err) {
+      console.error(`Error fetching enum data for ${enumName}:`, err);
+    }
+  };
+  
+  // ✅ useQuery only here
+  const { data: metaData, isLoading, error } = useQuery({
+    queryKey: ['resMetaData'],
+    queryFn: async () => {
+      const res = await fetch(metadataUrl, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      if (!res.ok) {
+        throw new Error(`Failed to fetch metadata: ${res.statusText}`);
+      }
+  
+      const data = await res.json();
+      // console.log(data)
+      setResMetaData(data);
+      setFields(data[0].fieldValues);
+  
+      const foreignFields = data[0].fieldValues.filter((field: any) => field.foreign);
+      for (const field of foreignFields) {
+        if (!fetchedResources.current.has(field.foreign)) {
+          fetchedResources.current.add(field.foreign);
+  
+          queryClient.prefetchQuery({
+            queryKey: ['foreignData', field.foreign],
+            queryFn: () => fetchForeignResource(field.foreign),
+          });
+  
+          await fetchForeignData(field.foreign, field.name, field.foreign_field);
+        }
+      }
+  
+      const enumFields = data[0].fieldValues.filter((field: any) => field.isEnum === true);
+      for (const field of enumFields) {
+        if (!fetchedEnum.current.has(field.possible_value)) {
+          fetchedEnum.current.add(field.possible_value);
+  
+          queryClient.prefetchQuery({
+            queryKey: ['enum', field.possible_value],
+            queryFn: () => fetchEnum(field.possible_value),
+          });
+  
+          await fetchEnumData(field.possible_value);
+        }
+      }
+  
+      return data;
+    },
+  });
 
 
   const handleEdit = (id: any, field: string, value: string) => {
@@ -149,47 +245,55 @@ const Edit = () => {
 
 
   const handleUpdate = async (id: any) => {
-    if (!editedRecord[id]) return;
+
+    if (!editedRecord[id]) {
+        console.warn("[handleUpdate] No edited record found for id:", id);
+        return;
+    }
 
     const updatedRecord = {
-      id,
-      ...editedRecord[id],
+        id,
+        ...editedRecord[id],
     };
 
-    // const base64Encoded = btoa(JSON.stringify(updatedRecord));
     const jsonString = JSON.stringify(updatedRecord);
-    // const base64Encoded = btoa(unescape(encodeURIComponent(jsonString)));
-    const uint8Array = new TextEncoder().encode(jsonString);
-    const base64Encoded = btoa(String.fromCharCode(...uint8Array));
+    console.log("[handleUpdate] updatedRecord JSON:", jsonString);
+
+    const base64Encoded = btoa(jsonString);
+    console.log("[handleUpdate] base64-encoded payload:", base64Encoded);
+
     const params = new URLSearchParams();
-    const ssid: any = sessionStorage.getItem("key");
     params.append("resource", base64Encoded);
-    params.append("action", "MODIFY");
-    params.append("session_id", ssid);
+
+    const accessToken = getCookie("access_token");
+    if (!accessToken) {
+        throw new Error("Access token not found");
+    }
 
     try {
-      const response = await fetch(
-        apiUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: params.toString(),
-        }
-      );
+        const response = await fetch(apiUrl + params.toString(), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": `Bearer ${accessToken}`,
+            },
+            credentials: "include",
+        });
 
-      if (response.ok) {
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-        window.location.assign(currUrl);
-      } else {
-        console.error("Error updating record:", response.statusText);
-      }
+        console.log("[handleUpdate] fetch response:", response);
+
+        if (response.ok) {
+            console.log("[handleUpdate] Update successful.");
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+        } else {
+            console.error("[handleUpdate] Error updating record:", response.statusText);
+        }
     } catch (error) {
-      console.error("Error in handleUpdate:", error);
+        console.error("[handleUpdate] Error during fetch:", error);
     }
-  };
+};
+
 
   return (
     <div className="container mt-4">

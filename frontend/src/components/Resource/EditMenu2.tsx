@@ -50,7 +50,7 @@ const EditMenu2 = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
       });
@@ -76,7 +76,7 @@ const EditMenu2 = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
       });
@@ -122,6 +122,12 @@ const EditMenu2 = () => {
       IsFeast: 'true',
     };
 
+    const jsonString = JSON.stringify(updatedMeal);
+    const base64Encoded = btoa(jsonString);
+    const params = new URLSearchParams();
+    params.append("action", "MODIFY");
+    params.append("resource", base64Encoded);
+
     const accessToken = getCookie('access_token');
     if (!accessToken) {
       toast.error('Authentication required');
@@ -129,19 +135,17 @@ const EditMenu2 = () => {
     }
     
     try {
-      const response = await fetch(mealApiUrl, {
+      const response = await fetch(mealApiUrl+'?'+ params.toString(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          resource: updatedMeal,
-          action: 'MODIFY',
-        }),
+        credentials: "include",
       });
-
+      
       if (response.ok) {
+        console.log(response)
         toast.success('Meal updated successfully!');
         setEditedFeastStatus(prev => ({ ...prev, [mealId]: false }));
       } else {
@@ -162,6 +166,12 @@ const EditMenu2 = () => {
       ...editedItems[itemId],
     };
 
+    const jsonString = JSON.stringify(updatedItem);
+    const base64Encoded = btoa(jsonString);
+    const params = new URLSearchParams();
+    params.append("action", "MODIFY");
+    params.append("resource", base64Encoded);
+
     const accessToken = getCookie('access_token');
     if (!accessToken) {
       toast.error('Authentication required');
@@ -169,19 +179,17 @@ const EditMenu2 = () => {
     }
 
     try {
-      const response = await fetch(menuItemApiUrl, {
+      const response = await fetch(menuItemApiUrl+'?'+params.toString(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          resource: updatedItem,
-          action: 'MODIFY',
-        }),
+        credentials: 'include',
       });
 
       if (response.ok) {
+        console.log(response)
         toast.success('Item updated successfully!');
         setEditedItems(prev => {
           const updated = { ...prev };
@@ -206,6 +214,11 @@ const EditMenu2 = () => {
       Meal_id: mealId,
     };
 
+    const jsonString = JSON.stringify(itemToCreate);
+    const base64Encoded = btoa(jsonString);
+    const params = new URLSearchParams();
+    params.append("resource", base64Encoded);
+
     const accessToken = getCookie('access_token');
     if (!accessToken) {
       toast.error('Authentication required');
@@ -213,18 +226,17 @@ const EditMenu2 = () => {
     }
 
     try {
-      const response = await fetch(menuItemApiUrl, {
+      const response = await fetch(menuItemApiUrl+'?' + params.toString(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          resource: itemToCreate,
-        }),
+        credentials: 'include',
       });
 
       if (response.ok) {
+        console.log(response);
         toast.success('New item created successfully!');
         setNewItems(prev => ({ ...prev, [mealId]: { Dish_name: '', type: '' } }));
       } else {

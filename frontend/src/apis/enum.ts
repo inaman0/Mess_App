@@ -32,10 +32,9 @@ export const fetchEnum = async (enumName: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getCookie("access_token")}`, // Add token here
+      'Authorization': `Bearer ${getCookie("access_token")}`, // Add token here
     },
     credentials: "include",
-    // body: formData, // Assuming you want to fetch all enum values,
   });
 
   if (!response.ok) {

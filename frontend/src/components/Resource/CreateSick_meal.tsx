@@ -275,11 +275,15 @@ const CreateSick_meal = () => {
     const selectedDate = new Date(mealSelection.Date)
       .toISOString()
       .split("T")[0];
-
+    console.log(selectedDate);
     const matchingMeal = mealData.find((meal) => {
-      const mealDate = new Date(meal.Date).toISOString().split("T")[0];
+      const mealDate = new Date(meal.Date);
+      mealDate.setDate(mealDate.getDate() + 1);
+      const incrementedDate = mealDate.toISOString().split("T")[0];
+
+      console.log(mealDate)
       return (
-        mealDate === selectedDate && meal.Meal_type === mealSelection.Meal_type
+        incrementedDate === selectedDate && meal.Meal_type === mealSelection.Meal_type
       );
     });
 

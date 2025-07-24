@@ -93,7 +93,7 @@ public class AuthController {
         Map<String, String> body = tokenResponse.getBody();
          accessToken = body.get("access_token");
         String refreshToken = body.get("refresh_token");
-        setCookie(response, "access_token", accessToken, 900); // 15 minutes expiry
+        setCookie(response, "access_token", accessToken, 86400); // 24 hours expiry
         setCookie(response, "refresh_token", refreshToken, 86400); // 24 hours expiry
     }
 
@@ -120,7 +120,7 @@ public class AuthController {
         String accessToken = body.get("access_token");
         String refreshToken = body.get("refresh_token");
 
-        setCookie(response, "access_token", accessToken, 60); // 1 minute
+        setCookie(response, "access_token", accessToken, 86400); // 24 hours expiry
         setCookie(response, "refresh_token", refreshToken, 86400); // 24 hours expiry
 
         String redirectUrl = frontendURL;

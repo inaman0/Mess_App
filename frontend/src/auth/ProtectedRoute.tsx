@@ -28,11 +28,11 @@ const ProtectedRoute = ({
     console.log(decodedToken);
     const username = decodedToken?.preferred_username;
 
-    if (adminOnly && username !== "admin1") {
+    if (adminOnly && username !== "foodcomm") {
       return <Navigate to="/" replace />;
     }
 
-    if (userOnly && username === "admin1") {
+    if (userOnly && username === "foodcomm") {
       return <Navigate to="/admin" replace />;
     }
 

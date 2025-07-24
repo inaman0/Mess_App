@@ -97,7 +97,7 @@ try{
     }
     if (res) {
       // if user is admin, navigate to admin page
-      if(username === "admin1"){
+      if(username === "foodcomm"){
         setIsLoggedIn(true);
         navigate("/admin");
       }

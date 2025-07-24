@@ -36,7 +36,7 @@ const getCurrentMealType = (): string => {
     }
   }
   
-  return 'Breakfast';
+  return 'Dinner';
 };
 const getCookie = (name: string): string | null => {
   const value = `; ${document.cookie}`;

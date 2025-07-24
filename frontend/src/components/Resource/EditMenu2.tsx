@@ -3,7 +3,7 @@ import apiConfig from '../../config/apiConfig';
 import './EditMenu2.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 type MealType = 'Breakfast' | 'Lunch' | 'Snacks' | 'Dinner';
 
@@ -29,6 +29,7 @@ const getCookie = (name: string): string | null => {
 };
 
 const EditMenu2 = () => {
+  const queryClient = useQueryClient();
   const [date, setDate] = useState('');
   const [selectedType, setSelectedType] = useState<MealType | ''>('');
   const [filteredMeals, setFilteredMeals] = useState<MealData[]>([]);
@@ -145,9 +146,10 @@ const EditMenu2 = () => {
       });
       
       if (response.ok) {
-        console.log(response)
         toast.success('Meal updated successfully!');
         setEditedFeastStatus(prev => ({ ...prev, [mealId]: false }));
+        await queryClient.invalidateQueries({ queryKey: ['meals'] });
+        handleSearch();
       } else {
         toast.error('Failed to update meal.');
       }
@@ -189,13 +191,14 @@ const EditMenu2 = () => {
       });
 
       if (response.ok) {
-        console.log(response)
         toast.success('Item updated successfully!');
         setEditedItems(prev => {
           const updated = { ...prev };
           delete updated[itemId];
           return updated;
         });
+        await queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+        handleSearch();
       } else {
         toast.error('Update failed.');
       }
@@ -236,9 +239,10 @@ const EditMenu2 = () => {
       });
 
       if (response.ok) {
-        console.log(response);
         toast.success('New item created successfully!');
         setNewItems(prev => ({ ...prev, [mealId]: { Dish_name: '', type: '' } }));
+        await queryClient.invalidateQueries({ queryKey: ['menuItems'] });
+        handleSearch();
       } else {
         toast.error('Failed to create new item.');
       }
@@ -265,7 +269,6 @@ const EditMenu2 = () => {
   const getFilteredMenuItems = (mealId: string): MenuItem[] => {
     return menuItems.filter((item: MenuItem) => item.Meal_id === mealId);
   };
-
 
   return (
     <div className="edit-menu2-container">

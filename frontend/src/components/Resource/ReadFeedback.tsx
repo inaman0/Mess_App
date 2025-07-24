@@ -2,12 +2,19 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
 import { useQuery } from '@tanstack/react-query';
-import "./ReadFeedback.css"; // Make sure to create this CSS file
+import "./ReadFeedback.css";
 
 export type ResourceMetaData = {
   resource: string;
   fieldValues: any[];
 };
+
+interface UserData {
+  id: string;
+  Name?: string;
+  Email?: string;
+  [key: string]: any;
+}
 
 const getCookie = (name: string): string | null => {
   const value = `; ${document.cookie}`;
@@ -22,11 +29,66 @@ const ReadFeedback = () => {
   const [fields, setFields] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData[]>([]);
 
   const itemsPerPage = 5;
   const regex = /^(g_|archived|extra_data)/;
   const apiUrl = `${apiConfig.getResourceUrl('feedback')}?`;
   const metadataUrl = `${apiConfig.getResourceMetaDataUrl('Feedback')}?`;
+  const userApiUrl = `${apiConfig.getResourceUrl('user')}?`;
+
+  // Field name mappings for display
+  const fieldNameMapping: { [key: string]: string } = {
+    User_id: "Student",
+    user_id: "Student",
+  };
+
+  // Fetch user data using React Query
+  const { data: userDataRes } = useQuery({
+    queryKey: ['userData'],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      const queryId: any = "GET_ALL";
+      params.append("queryId", queryId);
+
+      const accessToken = getCookie("access_token");
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await fetch(
+        userApiUrl + params.toString(),
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error: " + response.status);
+      }
+
+      const data = await response.json();
+      setUserData(data.resource || []);
+      return data;
+    },
+  });
+
+  // Function to get user details by User_id
+  const getUserDetails = (userId: string) => {
+    const user = userData.find((u) => u.id === userId);
+    if (user) {
+      return {
+        name: user.Name || "N/A",
+        email: user.Email || "N/A",
+      };
+    }
+    return { name: "N/A", email: "N/A" };
+  };
 
   // Fetch resource data using React Query
   const { data: dataRes, isLoading: isLoadingDataRes, error: errorDataRes } = useQuery({
@@ -109,43 +171,56 @@ const ReadFeedback = () => {
         <div className="feedback-grid">
           {paginatedData.map((feedback, index) => (
             <div key={index} className="feedback-card">
-              {displayFields.map((field) => (
-                <div key={field.name} className="feedback-item">
-                  <strong>{field.name}:</strong>{" "}
-                  {field.name === "Image" && feedback[field.name] ? (
-                    <img
-                      src={feedback[field.name].replace(/\s/g, "+")}
-                      alt="Feedback"
-                      className="feedback-image"
-                      onClick={() =>
-                        setSelectedImage(
-                          feedback[field.name].replace(/\s/g, "+")
-                        )
-                      }
-                    />
-                  ) : field.name.toLowerCase() === "description" ||
-                    field.name.toLowerCase() === "feedback" ? (
-                    <div className="feedback-text-scroll">
-                      <span>{feedback[field.name] || "N/A"}</span>
-                    </div>
-                  ) : field.name.toLowerCase().includes("date") ? (
-                    <span>
-                      {feedback[field.name]
-                        ? new Date(feedback[field.name]).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
+              {displayFields.map((field) => {
+                const displayName = fieldNameMapping[field.name] || field.name;
+
+                return (
+                  <div key={field.name} className="feedback-item">
+                    <strong>{displayName}:</strong>{" "}
+                    {field.name === "User" || field.name === "user" ? (
+                      <div className="student-details">
+                        <div>
+                          <strong>Name:</strong> {getUserDetails(feedback[field.name]).name}
+                        </div>
+                        <div>
+                          <strong>Email:</strong> {getUserDetails(feedback[field.name]).email}
+                        </div>
+                      </div>
+                    ) : field.name === "Image" && feedback[field.name] ? (
+                      <img
+                        src={feedback[field.name].replace(/\s/g, "+")}
+                        alt="Feedback"
+                        className="feedback-image"
+                        onClick={() =>
+                          setSelectedImage(
+                            feedback[field.name].replace(/\s/g, "+")
                           )
-                        : "N/A"}
-                    </span>
-                  ) : (
-                    <span>{feedback[field.name] || "N/A"}</span>
-                  )}
-                </div>
-              ))}
+                        }
+                      />
+                    ) : field.name.toLowerCase() === "description" ||
+                      field.name.toLowerCase() === "feedback" ? (
+                      <div className="feedback-text-scroll">
+                        <span>{feedback[field.name] || "N/A"}</span>
+                      </div>
+                    ) : field.name.toLowerCase().includes("date") ? (
+                      <span>
+                        {feedback[field.name]
+                          ? new Date(feedback[field.name]).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              }
+                            )
+                          : "N/A"}
+                      </span>
+                    ) : (
+                      <span>{feedback[field.name] || "N/A"}</span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ))}
         </div>

@@ -30,7 +30,7 @@ interface UserData {
 
 const ratingStartTimes = {
   Breakfast: 8,
-  Lunch: 1,
+  Lunch: 13,
   Snacks: 17,
   Dinner: 20
 };

@@ -235,8 +235,9 @@ const CreateFeedback = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center mt-5">
-      <div className="card shadow w-100" style={{ maxWidth: '600px' }}>
+    <div className='uploader-wrapper' style={{ width: '1500px'}}>
+      <div className="container d-flex justify-content-center align-items-center mt-5">
+      <div className="card shadow w-100" style={{ maxWidth: '600px',marginTop:'80px' }}>
         <div className="card-header bg-primary text-white text-center">
           <h4 className="mb-0">Create Feedback</h4>
         </div>
@@ -272,7 +273,7 @@ const CreateFeedback = () => {
                       name={field.name}
                       required={field.required}
                       placeholder={field.name}
-                      value={dataToSave[field.name] || getFormattedDate()}
+                      value={dataToSave[field.name] || ''}
                       onChange={(e) => setDataToSave({ ...dataToSave, [e.target.name]: e.target.value })}
                     />
                   </div>
@@ -339,6 +340,8 @@ const CreateFeedback = () => {
         </div>
       )}
     </div>
+    </div>
+    
   );
 };
 
